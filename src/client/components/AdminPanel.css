@@ -1,0 +1,54 @@
+.admin-panel {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 20px ;
+}
+
+.admin-tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.admin-tabs button {
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.admin-tabs button.active {
+    border-bottom: 2px solid #61dafb;
+    font-weight: bold;
+}
+
+.product-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.product-form input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.order-item {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}

@@ -1,39 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import { fetchAdminProducts, createProduct, fetchUsers, updateUserPermissions, fetchOrders } from '../api';
+import {
+    fetchAdminProducts,
+    createProduct,
+    fetchUsers,
+    updateUserPermissions,
+    fetchOrders,
+    onCreateProduct
+} from '../api';
 import './AdminPanel.css';
 import Product from "./Product";
+import axios from "axios";
 /*import {useNavigate} from "react-router-dom";*/
 const AdminPanel = () => {
 
-/*    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
-    const navigate = useNavigate();*/
     const [activeTab, setActiveTab] = useState('products');
     const [products, setProducts] = useState([]);
     const [users, setUsers] = useState([]);
     const [orders, setOrders] = useState([]);
-    const [newProduct, setNewProduct] = useState({
+    const [formData, setFormData] = useState({
+        name: '',
+        price: 0,
+        description: '',
+        category: '',
+        stock: 0,
+        image: null
+    });
+    const [preview, setPreview] = useState('');
+    /*const [newProduct, setNewProduct] = useState({
         name: '',
         price: 0,
         description: '',
         image: '',
         category: '',
         stock: 0
-    });
+    });*/
 
     useEffect(() => {
-
-        /*const verifyAccess = async () => {
-            try {
-                await checkAdminAccess();
-                setLoading(false);
-            } catch (err) {
-                setError('Доступ запрещен');
-                setTimeout(() => navigate('/'), 2000);
-            }
-        };
-        verifyAccess();*/
-
         const loadData = async () => {
             if (activeTab === 'products') {
                 const response = await fetchAdminProducts();
@@ -50,7 +52,7 @@ const AdminPanel = () => {
 
     }, [activeTab]);
 
-    const handleCreateProduct = async () => {
+    /*const handleCreateProduct = async () => {
         const product = await createProduct(newProduct);
         setProducts([...products, product]);
         setNewProduct({
@@ -61,9 +63,45 @@ const AdminPanel = () => {
             category: '',
             stock: 0
         });
+    };*/
+
+
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setFormData({ ...formData, image: file });
+            setPreview(URL.createObjectURL(file));
+        }
+    };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const data = new FormData();
+        data.append('name', formData.name);
+        data.append('price', formData.price);
+        data.append('description', formData.description);
+        data.append('category', formData.category);
+        data.append('stock', formData.stock);
+        if (formData.image) {
+            data.append('image', formData.image);
+        }
+
+        try {
+            // const token = localStorage.getItem('token');
+            const response = await onCreateProduct(data)
+            setFormData(response.data);
+            // setFormData({ name: '', price: 0, description: '', category: '', stock: 0, image: null });
+            setPreview('');
+        } catch (error) {
+            console.error('Ошибка создания товара:', error);
+        }
+    };
 
     const handleUpdateUser = async (userId, isAdmin) => {
         await updateUserPermissions(userId, isAdmin);
@@ -106,7 +144,47 @@ const AdminPanel = () => {
             {activeTab === 'products' && (
                 <div className="products-section">
                     <h3>Добавить новый товар</h3>
-                    <div className="product-form">
+
+                    <form onSubmit={handleSubmit} className="product-form">
+                        <div className="form-group">
+                            <label>Название:</label>
+                            <input
+                                type="text"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Цена:</label>
+                            <input
+                                type="text"
+                                name="price"
+                                value={formData.price}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Изображение:</label>
+                            <input
+                                type="file"
+                                name="image"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                            />
+                            {preview && (
+                                <div className="image-preview">
+                                    <img src={preview} alt="Предпросмотр" style={{ maxWidth: '200px', maxHeight: '200px' }} />
+                                </div>
+                            )}
+                        </div>
+
+                        <button type="submit">Создать товар</button>
+                    </form>
+
+                    {/*<div className="product-form">
                         <input
                             type="text"
                             placeholder="Название"
@@ -129,7 +207,7 @@ const AdminPanel = () => {
                         }
                         />
                         <button onClick={handleCreateProduct}>Добавить</button>
-                    </div>
+                    </div>*/}
 
                     <h3>Список товаров</h3>
                     <div className="products-list">

@@ -4,12 +4,10 @@ const Product = require('../models/Product');
 const auth = require('../middleware/auth');
 const router = express.Router();
 
-// Создать заказ
 router.post('/', auth, async (req, res) => {
     try {
         const { items, shippingAddress, paymentMethod } = req.body;
 
-        // Рассчитать общую сумму и обновить количество товаров
         let total = 0;
         const orderItems = [];
 
@@ -50,7 +48,6 @@ router.post('/', auth, async (req, res) => {
     }
 });
 
-// Получить заказы пользователя
 router.get('/my-orders', auth, async (req, res) => {
     try {
         const orders = await Order.find({ user: req.user.id }).populate('items.product');

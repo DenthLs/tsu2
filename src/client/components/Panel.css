@@ -1,0 +1,102 @@
+.panel {
+    padding: 20px;
+}
+
+.tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.tabs button {
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.tabs button.active {
+    border-bottom: 2px solid #61dafb;
+    font-weight: bold;
+}
+
+.tab-content {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Стили для SquareGenerator */
+.controls {
+    margin-bottom: 20px;
+}
+
+.controls input {
+    margin-right: 10px;
+    padding: 5px;
+}
+
+.squares-container {
+    min-height: 200px;
+    border: 1px dashed #ccc;
+    padding: 10px;
+}
+
+/* Стили для ProductTable */
+.price-filters {
+    margin-bottom: 15px;
+}
+
+.price-filters input {
+    margin-right: 10px;
+    padding: 5px;
+}
+
+.products-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.products-table th, .products-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.products-table th {
+    background-color: #f2f2f2;
+}
+
+/* Стили для EditableTable */
+.editable-table {
+    margin-bottom: 15px;
+    border-collapse: collapse;
+}
+
+.editable-table td {
+    border: 1px solid #ddd;
+    padding: 0;
+}
+
+.editable-table input {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    box-sizing: border-box;
+}
+
+.table-controls {
+    display: flex;
+    gap: 10px;
+}
+
+/* Стили для CpuChart */
+.chart-container {
+    max-width: 600px;
+}
+
+.chart-info {
+    margin-top: 10px;
+    font-weight: bold;
+}

@@ -25,13 +25,11 @@ const LoginModal = ({ onClose, onLogin }) => {
         try {
             let response;
             if (isLoginMode) {
-                // Вход пользователя
                 response = await login({
                     email: formData.email,
                     password: formData.password
                 });
             } else {
-                // Регистрация нового пользователя
                 response = await register({
                     email: formData.email,
                     password: formData.password,
@@ -39,7 +37,6 @@ const LoginModal = ({ onClose, onLogin }) => {
                 });
             }
 
-            // Вызываем колбэк с данными пользователя
             onLogin({
                 token: response.data.token,
                 isAdmin: response.data.user.isAdmin,

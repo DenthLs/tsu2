@@ -3,9 +3,6 @@ const config = require('../config');
 const User = require('../models/User');
 
 module.exports = async (req, res, next) => {
-    // Получить токен из заголовка
-
-
     const token = req.header('x-auth-token');
 
     if (!token) {
@@ -13,8 +10,7 @@ module.exports = async (req, res, next) => {
     }
 
     try {
-        // Верифицировать токен
-        req.user = jwt.verify(token, config.JWT_SECRET); /*await User.findById(decoded.id).select('-password');*/
+        req.user = jwt.verify(token, config.JWT_SECRET);
         next();
     } catch (err) {
         res.status(401).json({ message: 'Token is not valid' });

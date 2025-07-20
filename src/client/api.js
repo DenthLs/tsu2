@@ -19,6 +19,16 @@ export const fetchMyOrders = (token) => axios.get(`${API_URL}/orders/my-orders`,
     headers: { 'x-auth-token': token }
 });
 
+export const verifyToken = async (token) => {
+    try {
+        const response = await axios.get('/api/auth/verify', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        return response.data.valid;
+    } catch (error) {
+        return false;
+    }
+};
 
 
 /*export const checkAdminAccess = (token) => axios.get(`${API_URL}/admin/check-access`, {
@@ -31,3 +41,5 @@ export const fetchUsers = () => axios.get(`${API_URL}/admin/users`);
 export const updateUserPermissions = (userId, isAdmin) =>
     axios.put(`${API_URL}/admin/users/${userId}/permissions`, {isAdmin});
 export const fetchOrders = () => axios.get(`${API_URL}/admin/orders`);
+
+export const onCreateProduct = (data) => axios.post(`${API_URL}/admin/product`, data);

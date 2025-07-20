@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { fetchProducts, createOrder } from './client/api';
+import {fetchProducts, createOrder, verifyToken} from './client/api';
 import Header from './client/components/Header';
 import ProductList from './client/components/ProductList';
 import Cart from './client/components/Cart';
 import LoginModal from './client/components/LoginModal';
 import AdminPanel from './client/components/AdminPanel';
+import Panel from "./client/components/Panel";
 import './App.css';
 import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
 
@@ -17,10 +18,19 @@ function App() {
 
     const addToCart = (product) => {
         setCart(prevCart => {
-            const existingItem = prevCart.find(item => item.id === product.id);
+            const existingItem = prevCart.find(item =>
+                    item.id === product.id &&
+                    item.price === product.price &&
+                    item.name === product.name
+            );
+
             if (existingItem) {
                 return prevCart.map(item =>
-                    item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+                    item.id === product.id &&
+                    item.price === product.price &&
+                    item.name === product.name
+                        ? { ...item, quantity: item.quantity + 1 }
+                        : item
                 );
             }
             return [...prevCart, { ...product, quantity: 1 }];
@@ -28,7 +38,11 @@ function App() {
     };
 
     const removeFromCart = (productId) => {
-        setCart(prevCart => prevCart.filter(item => item.id !== productId));
+        setCart(prevCart => {
+            return prevCart.filter(item => {
+                return item.id !== productId;
+            });
+        });
     };
 
     const updateQuantity = (productId, newQuantity) => {
@@ -46,6 +60,25 @@ function App() {
     const cartTotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
     useEffect(() => {
+
+        const token = localStorage.getItem('token');
+        const savedUser = localStorage.getItem('user');
+
+        if (token && savedUser) {
+            try {
+                setUser(JSON.parse(savedUser));
+
+                // Опционально: проверяем валидность токена на сервере
+                verifyToken(token).then(isValid => {
+                    if (!isValid) {
+                        logout();
+                    }
+                });
+            } catch (e) {
+                console.error('Ошибка восстановления сессии', e);
+                logout();
+            }
+        }
         const loadProducts = async () => {
             try {
                 const response = await fetchProducts();
@@ -56,38 +89,17 @@ function App() {
         };
 
         loadProducts();
-
-        // Проверить наличие токена в localStorage
-        const token = localStorage.getItem('token');
-        if (token) {
-            // Здесь можно добавить запрос для проверки токена
-            // и загрузки данных пользователя
-        }
     }, []);
+
+    const logout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setUser(null);
+    };
 
     const handleCheckout = async () => {
         if (!user) {
             setIsLoginOpen(true);
-            return;
-        }
-
-        try {
-            const orderData = {
-                items: cart.map(item => ({
-                    product: item.id,
-                    quantity: item.quantity
-                })),
-                shippingAddress: '123 Main St', // В реальном приложении это будет форма
-                paymentMethod: 'credit-card'
-            };
-
-            await createOrder(orderData, user.token);
-            setCart([]);
-            alert('Order placed successfully!');
-            setIsCartOpen(false);
-        } catch (err) {
-            console.error('Order failed:', err);
-            alert('Failed to place order');
         }
     };
 
@@ -106,14 +118,19 @@ function App() {
             />
 
             <Routes>
-                {/* Основной маршрут */}
+
                 <Route path="/" element={
                     <main>
                         <ProductList products={products} onAddToCart={addToCart} />
                     </main>
                 } />
 
-                {/* Защищённый админский маршрут */}
+                <Route path="/panel" element={
+                    <main>
+                        <Panel/>
+                    </main>
+                } />
+
                 <Route
                     path="/admin"
                     element={

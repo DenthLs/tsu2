@@ -294,14 +294,14 @@ const Panel = () => {
 
         return (
             <div className="chart-container">
-                <h3>Загрузка CPU</h3>
+                <h3>Нагрузка CPU</h3>
                 <canvas
                     ref={chartRef}
                     width="600"
                     height="300"
                 />
                 <div className="chart-info">
-                    Текущая загрузка: {data.length > 0 ? `${data[data.length - 1]}%` : '0%'}
+                    Текущая нагрузка: {data.length > 0 ? `${data[data.length - 1]}%` : '0%'}
                 </div>
             </div>
         );
